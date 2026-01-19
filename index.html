@@ -3,40 +3,29 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>DCD Possess The Land | Dashboard</title>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=SF+Mono&display=swap" rel="stylesheet">
+    <title>DCD Fundraising | Management System</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
 
-    <aside>
+    <aside class="no-print">
         <div class="brand">
-            <div class="brand-icon">🏝️</div>
+            <div class="brand-icon">🏛️</div>
             <div>
                 <div class="brand-name">DCD</div>
-                <div class="brand-subtitle">Possess The Land</div>
+                <div class="brand-subtitle">FUNDRAISING</div>
             </div>
         </div>
 
         <nav class="nav-group">
-            <div class="nav-item active" onclick="app.router('dashboard')">
-                <span class="nav-icon">📊</span> Dashboard
-            </div>
-            <div class="nav-item" onclick="app.router('pledges')">
-                <span class="nav-icon">🤝</span> Pledges
-            </div>
-            <div class="nav-item" onclick="app.router('ledger')">
-                <span class="nav-icon">📒</span> Ledger
-            </div>
-            <div class="nav-item" onclick="app.router('expenses')">
-                <span class="nav-icon">📉</span> Expenses
-            </div>
-            <div class="nav-item" onclick="app.router('tribes')">
-                <span class="nav-icon">🏆</span> Tribes
-            </div>
-            <div class="nav-item" onclick="app.router('settings')">
-                <span class="nav-icon">⚙️</span> Settings
-            </div>
+            <div class="nav-item active" onclick="app.router('dashboard')">📊 Dashboard</div>
+            <div class="nav-item" onclick="app.router('pledges')">🤝 Pledges</div>
+            <div class="nav-item" onclick="app.router('ledger')">📒 Ledger</div>
+            <div class="nav-item" onclick="app.router('expenses')">📉 Expenses</div>
+            <div class="nav-item" onclick="app.router('departments')">🏛️ Departments</div>
+            <div class="nav-item" onclick="app.router('settings')">⚙️ Settings</div>
         </nav>
     </aside>
 
@@ -45,112 +34,77 @@
         <section id="view-dashboard" class="animate-fade-in">
             <div class="page-header">
                 <div>
-                    <h1>Dashboard</h1>
-                    <p>Real-time fundraising overview</p>
+                    <h1>Executive Summary</h1>
+                    <p>Financial health and progress tracking</p>
                 </div>
-                <div class="header-actions">
-                    <button class="btn btn-primary" onclick="app.openModal('manual-cash')">💰 Add Cash</button>
-                    <button class="btn btn-secondary" onclick="app.openModal('sms-parse')">📱 Import SMS</button>
+                <div class="header-actions no-print">
+                    <button class="btn btn-secondary" onclick="window.print()">🖨️ Print PDF Report</button>
+                    <button class="btn btn-primary" onclick="app.openModal('manual-cash')">💰 Record Payment</button>
                 </div>
             </div>
 
             <div class="kpi-grid">
-                <div class="kpi-card kpi-success">
-                    <div class="kpi-icon">💵</div>
-                    <div>
-                        <p class="text-light">Total Collected</p>
-                        <h2 class="kpi-value" id="dash-cash">0</h2>
-                    </div>
-                </div>
-                <div class="kpi-card kpi-danger">
-                    <div class="kpi-icon">💸</div>
-                    <div>
-                        <p class="text-light">Expenses</p>
-                        <h2 class="kpi-value" id="dash-expenses">0</h2>
-                    </div>
-                </div>
                 <div class="kpi-card kpi-primary">
                     <div class="kpi-icon">🏦</div>
-                    <div>
-                        <p class="text-light">Net Balance</p>
-                        <h2 class="kpi-value" id="dash-net">0</h2>
-                    </div>
+                    <div><p>Net Balance</p><h2 id="dash-net">KES 0</h2></div>
                 </div>
-                <div class="kpi-card kpi-info">
-                    <div class="kpi-icon">📜</div>
-                    <div>
-                        <p class="text-light">Total Pledged</p>
-                        <h2 class="kpi-value" id="dash-pledges">0</h2>
-                    </div>
+                <div class="kpi-card kpi-success">
+                    <div class="kpi-icon">📈</div>
+                    <div><p>Total Revenue</p><h2 id="dash-cash">KES 0</h2></div>
+                </div>
+                <div class="kpi-card kpi-danger">
+                    <div class="kpi-icon">📉</div>
+                    <div><p>Total Expenses</p><h2 id="dash-expenses">KES 0</h2></div>
                 </div>
             </div>
 
-            <div class="content-grid" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 24px;">
-                <div class="card">
-                    <div class="card-header">
-                        <h3>🎯 Phase Targets</h3>
-                        <div class="badge badge-success" id="dash-rate">0%</div>
-                    </div>
-                    <div class="card-body" id="phase-list">
-                        </div>
-                </div>
-
-                <div class="card">
-                    <div class="card-header">
-                        <h3>🕒 Recent Activity</h3>
-                    </div>
-                    <div class="card-body" id="recent-activity">
-                        </div>
+            <div class="chart-container card">
+                <div class="card-header"><h3>Revenue vs Expenses Visualizer</h3></div>
+                <div class="card-body">
+                    <canvas id="financeChart" style="max-height: 300px;"></canvas>
                 </div>
             </div>
         </section>
 
-        <section id="view-pledges" class="hidden">
+        <section id="view-pledges" class="hidden animate-fade-in">
             <div class="page-header">
-                <div>
-                    <h1>Pledges</h1>
-                    <p>Manage member commitments</p>
-                </div>
-                <button class="btn btn-primary" onclick="app.openModal('pledge')">+ New Pledge</button>
-            </div>
-
-            <div class="card">
-                <div class="card-header">
-                    <input type="text" id="pledge-search" placeholder="Search name..." onkeyup="app.renderPledges()" style="max-width: 300px;">
-                </div>
-                <div class="table-container">
-                    <table>
-                        <thead>
-                            <tr>
-                                <th>Name</th>
-                                <th>Dept</th>
-                                <th class="text-right">Pledged</th>
-                                <th class="text-right">Paid</th>
-                                <th class="text-right">Balance</th>
-                                <th class="text-right">Status</th>
-                                <th class="text-center">Actions</th>
-                            </tr>
-                        </thead>
-                        <tbody id="pledges-table-body"></tbody>
-                    </table>
-                </div>
-            </div>
-        </section>
-
-        <section id="view-ledger" class="hidden">
-            <div class="page-header">
-                <h1>General Ledger</h1>
-                <div class="header-actions">
-                    <button class="btn btn-secondary" onclick="app.exportCSV('ledger')">📄 Export CSV</button>
+                <h1>Member Pledges</h1>
+                <div class="header-actions no-print">
+                    <button class="btn btn-secondary" onclick="document.getElementById('csv-input').click()">📤 Import CSV</button>
+                    <input type="file" id="csv-input" hidden accept=".csv" onchange="app.handleCSVUpload(this)">
+                    <button class="btn btn-primary" onclick="app.openModal('pledge')">+ New Pledge</button>
                 </div>
             </div>
             <div class="card table-container">
                 <table>
                     <thead>
                         <tr>
+                            <th>Member Name</th>
+                            <th>Department</th>
+                            <th class="text-right">Pledged</th>
+                            <th class="text-right">Paid</th>
+                            <th class="text-right">Balance</th>
+                            <th class="text-center">Status</th>
+                            <th class="text-center no-print">Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="pledges-table-body"></tbody>
+                </table>
+            </div>
+        </section>
+
+        <section id="view-ledger" class="hidden animate-fade-in">
+            <div class="page-header">
+                <h1>General Ledger</h1>
+                <button class="btn btn-secondary no-print" onclick="window.print()">🖨️ Generate PDF</button>
+            </div>
+            <div class="card table-container">
+                <table>
+                    <thead>
+                        <tr>
                             <th>Date</th>
-                            <th>Ref</th>
-                            <th>Description/Name</th>
+                            <th>Reference</th>
+                            <th>Description</th>
                             <th>Type</th>
                             <th class="text-right">Amount</th>
                         </tr>
@@ -160,10 +114,10 @@
             </div>
         </section>
 
-        <section id="view-expenses" class="hidden">
+        <section id="view-expenses" class="hidden animate-fade-in">
             <div class="page-header">
-                <h1>Expenses</h1>
-                <button class="btn btn-danger" onclick="app.openModal('expense')">- Record Expense</button>
+                <h1>Expense Tracker</h1>
+                <button class="btn btn-danger no-print" onclick="app.openModal('expense')">- New Expense</button>
             </div>
             <div class="card table-container">
                 <table>
@@ -173,7 +127,6 @@
                             <th>Category</th>
                             <th>Description</th>
                             <th class="text-right">Amount</th>
-                            <th class="text-center">Receipt</th>
                         </tr>
                     </thead>
                     <tbody id="expenses-table-body"></tbody>
@@ -181,198 +134,89 @@
             </div>
         </section>
 
-        <section id="view-tribes" class="hidden">
+        <section id="view-departments" class="hidden animate-fade-in">
             <div class="page-header">
                 <h1>Department Performance</h1>
+                <button class="btn btn-secondary no-print" onclick="window.print()">🖨️ Dept Report</button>
             </div>
-            <div class="kpi-grid" id="tribes-container">
-                </div>
+            <div class="kpi-grid" id="dept-container"></div>
         </section>
 
-        <section id="view-settings" class="hidden">
-            <div class="page-header">
-                <h1>Settings</h1>
-            </div>
-            
+        <section id="view-settings" class="hidden animate-fade-in">
+            <div class="page-header"><h1>System Settings</h1></div>
             <div class="card">
-                <div class="card-header"><h3>⚙️ Data Management</h3></div>
+                <div class="card-header"><h3>Data Integrity & Backups</h3></div>
                 <div class="card-body">
-                    <div style="display: flex; gap: 10px; flex-wrap: wrap;">
-                        <button class="btn btn-secondary" onclick="app.downloadBackup()">💾 Backup Data</button>
-                        <input type="file" id="restore-input" hidden onchange="app.restoreBackup(this)">
-                        <button class="btn btn-secondary" onclick="document.getElementById('restore-input').click()">📂 Restore Data</button>
-                        <button class="btn btn-danger" onclick="app.hardReset()">⚠️ Reset Everything</button>
+                    <p>Download a backup file to restore your data on another device or after clearing browser cache.</p>
+                    <div style="display: flex; gap: 12px; margin-top: 20px;">
+                        <button class="btn btn-primary" onclick="app.downloadBackup()">💾 Export JSON Backup</button>
+                        <button class="btn btn-secondary" onclick="document.getElementById('restore-input').click()">📂 Restore from JSON</button>
+                        <input type="file" id="restore-input" hidden accept=".json" onchange="app.restoreBackup(this)">
                     </div>
                 </div>
             </div>
-
-            <div class="card">
-                <div class="card-header"><h3>📅 Create New Phase</h3></div>
+            <div class="card" style="border-color: #fee2e2;">
+                <div class="card-header" style="color: #dc2626;"><h3>Danger Zone</h3></div>
                 <div class="card-body">
-                    <form id="phase-form" onsubmit="app.addPhaseFromForm(event)">
-                        <div class="form-group" style="margin-bottom: 16px;">
-                            <label>Phase Name</label>
-                            <input type="text" id="phase-name" placeholder="e.g. Phase 2: Foundation" required>
-                        </div>
-                        <div class="form-group" style="margin-bottom: 16px;">
-                            <label>Start Date</label>
-                            <input type="date" id="phase-date" required>
-                        </div>
-                        <div style="margin: 20px 0;">
-                            <h4>Department Targets</h4>
-                            <div id="dept-targets-container" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 16px; margin-top: 10px;">
-                                </div>
-                        </div>
-                        <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 20px; border-top: 1px solid var(--border); padding-top: 20px;">
-                            <div>Total Target: <strong id="total-target-preview">KES 0</strong></div>
-                            <button type="submit" class="btn btn-primary">Start Phase</button>
-                        </div>
-                    </form>
+                    <button class="btn btn-danger" onclick="app.hardReset()">🗑️ Format Database (Delete Everything)</button>
                 </div>
-            </div>
-            
-            <div class="card">
-                <div class="card-header"><h3>Active Phases</h3></div>
-                <div class="card-body" id="settings-phase-list"></div>
             </div>
         </section>
     </main>
 
-    <div class="modal-overlay" id="modal-pledge">
+    <div class="modal-overlay" id="modal-manual-cash">
         <div class="modal">
-            <div class="card-header">
-                <h3>New Pledge</h3>
-                <button class="btn btn-sm btn-secondary" onclick="app.closeModal('pledge')">✕</button>
-            </div>
-            <form class="card-body" onsubmit="app.submitPledge(event)">
-                <div style="margin-bottom: 15px;">
-                    <label>Member Name</label>
-                    <input type="text" name="name" list="member-list" required placeholder="Full Name">
-                    <datalist id="member-list"></datalist>
+            <div class="card-header"><h3>Record Payment</h3></div>
+            <form class="card-body" onsubmit="app.submitManualCash(event)">
+                <div class="form-group">
+                    <label>Payer Name</label>
+                    <input type="text" id="cash-name" required placeholder="John Doe">
                 </div>
-                <div style="margin-bottom: 15px;">
+                <div class="form-group">
                     <label>Department</label>
-                    <select name="department" id="modal-dept-select" required></select>
+                    <select id="cash-dept"></select>
                 </div>
-                <div style="margin-bottom: 20px;">
+                <div class="form-group">
                     <label>Amount (KES)</label>
-                    <input type="number" name="amount" required min="1">
+                    <input type="number" id="cash-amount" required>
                 </div>
-                <button type="submit" class="btn btn-primary" style="width: 100%">Save Pledge</button>
+                <div class="form-group">
+                    <label>Method/Ref</label>
+                    <input type="text" id="cash-ref" placeholder="e.g. Cash, M-Pesa Ref">
+                </div>
+                <div style="margin-top: 20px; display: flex; gap: 10px;">
+                    <button type="button" class="btn btn-secondary" style="flex:1" onclick="app.closeModal('manual-cash')">Cancel</button>
+                    <button type="submit" class="btn btn-primary" style="flex:1">Save</button>
+                </div>
             </form>
         </div>
     </div>
 
-    <div class="modal-overlay" id="modal-manual-cash">
+    <div class="modal-overlay" id="modal-pledge">
         <div class="modal">
-            <div class="card-header">
-                <h3>Record Payment</h3>
-                <button class="btn btn-sm btn-secondary" onclick="app.closeModal('manual-cash')">✕</button>
-            </div>
-            <form class="card-body" onsubmit="app.submitManualCash(event)">
-                <div style="margin-bottom: 15px;">
-                    <label>Payer Name</label>
-                    <input type="text" id="cash-name" list="member-list" required placeholder="Search or enter name">
-                </div>
-                <div style="margin-bottom: 15px;">
-                    <label>Department</label>
-                    <select id="cash-dept" required></select>
-                </div>
-                <div style="margin-bottom: 15px;">
-                    <label>Amount (KES)</label>
-                    <input type="number" id="cash-amount" required min="1">
-                </div>
-                <div style="margin-bottom: 20px;">
-                    <label>Reference / Note</label>
-                    <input type="text" id="cash-ref" placeholder="e.g. Offering Envelope #102">
-                </div>
-                <button type="submit" class="btn btn-primary" style="width: 100%">Record Payment</button>
+            <div class="card-header"><h3>New Commitment</h3></div>
+            <form class="card-body" onsubmit="app.submitPledge(event)">
+                <div class="form-group"><label>Name</label><input type="text" name="name" required></div>
+                <div class="form-group"><label>Department</label><select name="department" id="pledge-dept"></select></div>
+                <div class="form-group"><label>Amount</label><input type="number" name="amount" required></div>
+                <button type="submit" class="btn btn-primary" style="width:100%; margin-top:15px;">Add Pledge</button>
             </form>
         </div>
     </div>
 
     <div class="modal-overlay" id="modal-expense">
         <div class="modal">
-            <div class="card-header">
-                <h3>Record Expense</h3>
-                <button class="btn btn-sm btn-secondary" onclick="app.closeModal('expense')">✕</button>
-            </div>
+            <div class="card-header"><h3>Record Expense</h3></div>
             <form class="card-body" onsubmit="app.submitExpense(event)">
-                <div style="margin-bottom: 15px;">
-                    <label>Description</label>
-                    <input type="text" id="expense-desc" required placeholder="e.g. Lunch for workers">
-                </div>
-                <div style="margin-bottom: 15px;">
-                    <label>Category</label>
-                    <select id="expense-category">
-                        <option>Food & Drink</option>
-                        <option>Transport</option>
-                        <option>Materials</option>
-                        <option>Logistics</option>
-                        <option>Other</option>
-                    </select>
-                </div>
-                <div style="margin-bottom: 20px;">
-                    <label>Amount (KES)</label>
-                    <input type="number" id="expense-amount" required min="1">
-                </div>
-                <button type="submit" class="btn btn-danger" style="width: 100%">Save Expense</button>
+                <div class="form-group"><label>Description</label><input type="text" id="exp-desc" required></div>
+                <div class="form-group"><label>Category</label><input type="text" id="exp-cat" placeholder="e.g. Transport"></div>
+                <div class="form-group"><label>Amount</label><input type="number" id="exp-amt" required></div>
+                <button type="submit" class="btn btn-danger" style="width:100%; margin-top:15px;">Save Expense</button>
             </form>
         </div>
     </div>
 
-    <div class="modal-overlay" id="modal-edit-pledge">
-        <div class="modal">
-            <div class="card-header">
-                <h3>Edit Pledge</h3>
-                <button class="btn btn-sm btn-secondary" onclick="app.closeModal('edit-pledge')">✕</button>
-            </div>
-            <form class="card-body" onsubmit="app.updatePledgeSubmit(event)">
-                <input type="hidden" id="edit-id">
-                <div style="margin-bottom: 15px;">
-                    <label>Name</label>
-                    <input type="text" name="name" required>
-                </div>
-                <div style="margin-bottom: 15px;">
-                    <label>Department</label>
-                    <select name="department" id="edit-dept-select" required></select>
-                </div>
-                <div style="margin-bottom: 20px;">
-                    <label>Total Pledge Amount</label>
-                    <input type="number" name="amount" required>
-                </div>
-                <button type="submit" class="btn btn-primary" style="width: 100%">Update Changes</button>
-            </form>
-        </div>
-    </div>
-
-    <div class="modal-overlay" id="modal-sms-parse">
-        <div class="modal" style="max-width: 600px;">
-            <div class="card-header">
-                <h3>Import M-Pesa SMS</h3>
-                <button class="btn btn-sm btn-secondary" onclick="app.closeModal('sms-parse')">✕</button>
-            </div>
-            <div class="card-body">
-                <p class="text-light" style="margin-bottom: 10px; font-size: 0.85rem;">Paste messages below. Examples: "SB123 Confirmed. Ksh100 sent to..."</p>
-                <textarea id="sms-input" rows="5" placeholder="Paste SMS content here..." style="font-family: monospace; font-size: 0.85rem;"></textarea>
-                
-                <div id="staged-area" class="hidden" style="margin-top: 20px; background: #F9FAFB; padding: 15px; border-radius: 8px; border: 1px solid var(--border);">
-                    <div style="display: flex; justify-content: space-between; margin-bottom: 10px;">
-                        <strong>Found <span id="staged-count">0</span> Transactions</strong>
-                    </div>
-                    <div id="staged-list" style="max-height: 200px; overflow-y: auto; display: flex; flex-direction: column; gap: 8px;">
-                        </div>
-                </div>
-
-                <div style="margin-top: 20px; display: flex; gap: 10px;">
-                    <button class="btn btn-secondary" id="btn-parse-trigger" onclick="app.processSMS()" style="width: 100%">⚡ Extract Data</button>
-                    <button class="btn btn-primary hidden" id="btn-commit-trigger" onclick="app.commitStaged()" style="width: 100%">✅ Commit Transactions</button>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <div id="toast-container" style="position: fixed; bottom: 20px; right: 20px; z-index: 3000;"></div>
+    <div id="toast-container"></div>
 
     <script src="script.js"></script>
 </body>
