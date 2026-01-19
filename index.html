@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>DCD Fundraising | Management System</title>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <link rel="stylesheet" href="style.css">
 </head>
@@ -12,13 +12,12 @@
 
     <aside class="no-print">
         <div class="brand">
-            <div class="brand-icon">🏛️</div>
-            <div>
+            <span class="brand-icon">🏛️</span>
+            <div class="brand-text">
                 <div class="brand-name">DCD</div>
-                <div class="brand-subtitle">FUNDRAISING</div>
+                <div class="brand-subtitle">POSSESS THE LAND</div>
             </div>
         </div>
-
         <nav class="nav-group">
             <div class="nav-item active" onclick="app.router('dashboard')">📊 Dashboard</div>
             <div class="nav-item" onclick="app.router('pledges')">🤝 Pledges</div>
@@ -30,16 +29,15 @@
     </aside>
 
     <main>
-        
         <section id="view-dashboard" class="animate-fade-in">
             <div class="page-header">
                 <div>
-                    <h1>Executive Summary</h1>
-                    <p>Financial health and progress tracking</p>
+                    <h1>Financial Summary</h1>
+                    <p>Tracking revenue vs expenditures</p>
                 </div>
                 <div class="header-actions no-print">
                     <button class="btn btn-secondary" onclick="window.print()">🖨️ Print PDF Report</button>
-                    <button class="btn btn-primary" onclick="app.openModal('manual-cash')">💰 Record Payment</button>
+                    <button class="btn btn-primary" onclick="app.openModal('manual-cash')">💰 Add Payment</button>
                 </div>
             </div>
 
@@ -53,15 +51,15 @@
                     <div><p>Total Revenue</p><h2 id="dash-cash">KES 0</h2></div>
                 </div>
                 <div class="kpi-card kpi-danger">
-                    <div class="kpi-icon">📉</div>
+                    <div class="kpi-icon">💸</div>
                     <div><p>Total Expenses</p><h2 id="dash-expenses">KES 0</h2></div>
                 </div>
             </div>
 
-            <div class="chart-container card">
-                <div class="card-header"><h3>Revenue vs Expenses Visualizer</h3></div>
-                <div class="card-body">
-                    <canvas id="financeChart" style="max-height: 300px;"></canvas>
+            <div class="card">
+                <div class="card-header"><h3>Revenue Visualization</h3></div>
+                <div class="card-body" style="height: 300px;">
+                    <canvas id="financeChart"></canvas>
                 </div>
             </div>
         </section>
@@ -79,13 +77,12 @@
                 <table>
                     <thead>
                         <tr>
-                            <th>Member Name</th>
+                            <th>Name</th>
                             <th>Department</th>
                             <th class="text-right">Pledged</th>
                             <th class="text-right">Paid</th>
                             <th class="text-right">Balance</th>
                             <th class="text-center">Status</th>
-                            <th class="text-center no-print">Actions</th>
                         </tr>
                     </thead>
                     <tbody id="pledges-table-body"></tbody>
@@ -93,72 +90,34 @@
             </div>
         </section>
 
+        <section id="view-departments" class="hidden animate-fade-in">
+            <div class="page-header"><h1>Department Rankings</h1></div>
+            <div class="kpi-grid" id="dept-container"></div>
+        </section>
+
         <section id="view-ledger" class="hidden animate-fade-in">
-            <div class="page-header">
-                <h1>General Ledger</h1>
-                <button class="btn btn-secondary no-print" onclick="window.print()">🖨️ Generate PDF</button>
-            </div>
+            <div class="page-header"><h1>General Ledger</h1></div>
             <div class="card table-container">
                 <table>
                     <thead>
-                        <tr>
-                            <th>Date</th>
-                            <th>Reference</th>
-                            <th>Description</th>
-                            <th>Type</th>
-                            <th class="text-right">Amount</th>
-                        </tr>
+                        <tr><th>Date</th><th>Reference</th><th>Description</th><th>Type</th><th class="text-right">Amount</th></tr>
                     </thead>
                     <tbody id="ledger-table-body"></tbody>
                 </table>
             </div>
         </section>
 
-        <section id="view-expenses" class="hidden animate-fade-in">
-            <div class="page-header">
-                <h1>Expense Tracker</h1>
-                <button class="btn btn-danger no-print" onclick="app.openModal('expense')">- New Expense</button>
-            </div>
-            <div class="card table-container">
-                <table>
-                    <thead>
-                        <tr>
-                            <th>Date</th>
-                            <th>Category</th>
-                            <th>Description</th>
-                            <th class="text-right">Amount</th>
-                        </tr>
-                    </thead>
-                    <tbody id="expenses-table-body"></tbody>
-                </table>
-            </div>
-        </section>
-
-        <section id="view-departments" class="hidden animate-fade-in">
-            <div class="page-header">
-                <h1>Department Performance</h1>
-                <button class="btn btn-secondary no-print" onclick="window.print()">🖨️ Dept Report</button>
-            </div>
-            <div class="kpi-grid" id="dept-container"></div>
-        </section>
-
         <section id="view-settings" class="hidden animate-fade-in">
             <div class="page-header"><h1>System Settings</h1></div>
             <div class="card">
-                <div class="card-header"><h3>Data Integrity & Backups</h3></div>
+                <div class="card-header"><h3>Backup & Integrity</h3></div>
                 <div class="card-body">
-                    <p>Download a backup file to restore your data on another device or after clearing browser cache.</p>
-                    <div style="display: flex; gap: 12px; margin-top: 20px;">
-                        <button class="btn btn-primary" onclick="app.downloadBackup()">💾 Export JSON Backup</button>
-                        <button class="btn btn-secondary" onclick="document.getElementById('restore-input').click()">📂 Restore from JSON</button>
+                    <div style="display: flex; gap: 10px;">
+                        <button class="btn btn-primary" onclick="app.downloadBackup()">💾 Export JSON</button>
+                        <button class="btn btn-secondary" onclick="document.getElementById('restore-input').click()">📂 Restore JSON</button>
                         <input type="file" id="restore-input" hidden accept=".json" onchange="app.restoreBackup(this)">
+                        <button class="btn btn-danger" onclick="app.hardReset()">🗑️ Hard Reset</button>
                     </div>
-                </div>
-            </div>
-            <div class="card" style="border-color: #fee2e2;">
-                <div class="card-header" style="color: #dc2626;"><h3>Danger Zone</h3></div>
-                <div class="card-body">
-                    <button class="btn btn-danger" onclick="app.hardReset()">🗑️ Format Database (Delete Everything)</button>
                 </div>
             </div>
         </section>
@@ -166,57 +125,29 @@
 
     <div class="modal-overlay" id="modal-manual-cash">
         <div class="modal">
-            <div class="card-header"><h3>Record Payment</h3></div>
-            <form class="card-body" onsubmit="app.submitManualCash(event)">
-                <div class="form-group">
-                    <label>Payer Name</label>
-                    <input type="text" id="cash-name" required placeholder="John Doe">
-                </div>
-                <div class="form-group">
-                    <label>Department</label>
-                    <select id="cash-dept"></select>
-                </div>
-                <div class="form-group">
-                    <label>Amount (KES)</label>
-                    <input type="number" id="cash-amount" required>
-                </div>
-                <div class="form-group">
-                    <label>Method/Ref</label>
-                    <input type="text" id="cash-ref" placeholder="e.g. Cash, M-Pesa Ref">
-                </div>
-                <div style="margin-top: 20px; display: flex; gap: 10px;">
-                    <button type="button" class="btn btn-secondary" style="flex:1" onclick="app.closeModal('manual-cash')">Cancel</button>
-                    <button type="submit" class="btn btn-primary" style="flex:1">Save</button>
-                </div>
+            <h3>Record Payment</h3>
+            <form onsubmit="app.submitManualCash(event)">
+                <input type="text" id="cash-name" placeholder="Payer Name" required>
+                <select id="cash-dept" style="margin: 10px 0;"></select>
+                <input type="number" id="cash-amount" placeholder="Amount (KES)" required>
+                <button type="submit" class="btn btn-primary" style="width:100%; margin-top:15px;">Save Payment</button>
+                <button type="button" class="btn btn-secondary" style="width:100%; margin-top:5px;" onclick="app.closeModal('manual-cash')">Cancel</button>
             </form>
         </div>
     </div>
 
     <div class="modal-overlay" id="modal-pledge">
         <div class="modal">
-            <div class="card-header"><h3>New Commitment</h3></div>
-            <form class="card-body" onsubmit="app.submitPledge(event)">
-                <div class="form-group"><label>Name</label><input type="text" name="name" required></div>
-                <div class="form-group"><label>Department</label><select name="department" id="pledge-dept"></select></div>
-                <div class="form-group"><label>Amount</label><input type="number" name="amount" required></div>
+            <h3>New Pledge</h3>
+            <form onsubmit="app.submitPledge(event)">
+                <input type="text" name="name" placeholder="Member Name" required>
+                <select name="department" id="pledge-dept" style="margin: 10px 0;"></select>
+                <input type="number" name="amount" placeholder="Commitment Amount" required>
                 <button type="submit" class="btn btn-primary" style="width:100%; margin-top:15px;">Add Pledge</button>
+                <button type="button" class="btn btn-secondary" style="width:100%; margin-top:5px;" onclick="app.closeModal('pledge')">Cancel</button>
             </form>
         </div>
     </div>
-
-    <div class="modal-overlay" id="modal-expense">
-        <div class="modal">
-            <div class="card-header"><h3>Record Expense</h3></div>
-            <form class="card-body" onsubmit="app.submitExpense(event)">
-                <div class="form-group"><label>Description</label><input type="text" id="exp-desc" required></div>
-                <div class="form-group"><label>Category</label><input type="text" id="exp-cat" placeholder="e.g. Transport"></div>
-                <div class="form-group"><label>Amount</label><input type="number" id="exp-amt" required></div>
-                <button type="submit" class="btn btn-danger" style="width:100%; margin-top:15px;">Save Expense</button>
-            </form>
-        </div>
-    </div>
-
-    <div id="toast-container"></div>
 
     <script src="script.js"></script>
 </body>
